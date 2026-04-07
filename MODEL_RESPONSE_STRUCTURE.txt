@@ -1,0 +1,393 @@
+================================================================================
+PROMPTFORGE - MODEL RESPONSE STRUCTURE REFERENCE
+================================================================================
+
+Last Updated: April 7, 2026
+Model: deepseek-v3:671b
+API Endpoint: https://ollama.com/api/generate
+SDK: httpx (async HTTP client)
+
+================================================================================
+1. RESPONSE FORMAT
+================================================================================
+
+All API responses return a PromptResponse JSON object:
+
+{
+  "prompt": "string (the generated system prompt)",
+  "tokens_used": integer (number of tokens consumed),
+  "error": "string (empty if success, contains error message if failed)"
+}
+
+Example Success Response:
+{
+  "prompt": "You are a Python coding assistant...",
+  "tokens_used": 487,
+  "error": ""
+}
+
+Example Error Response:
+{
+  "prompt": "",
+  "tokens_used": 0,
+  "error": "Ollama API error: 401 - Unauthorized"
+}
+
+================================================================================
+2. STYLE VARIATIONS
+================================================================================
+
+The generated prompt format varies by style selection. Here's what to expect:
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STYLE: MINIMAL (Code-Focused)
+Token Range: 50-200 tokens
+Use Case: When you want the shortest, most direct prompt possible
+Example Output Structure:
+  - Opening one-liner
+  - 3-5 core rules (numbered)
+  - No examples or edge cases
+  - Direct and ruthless about brevity
+
+Example:
+"You are a Python code refactorer. Fix inefficiencies. Output code only, 
+no explanations. Use type hints. Never suggest breaking changes."
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STYLE: BALANCED (Recommended)
+Token Range: 300-500 tokens
+Use Case: Most common choice, best for general-purpose coding assistants
+Example Output Structure:
+  - Clear opening description
+  - Primary objectives (numbered list)
+  - Behavioral guidelines
+  - What to explain when suggesting changes
+  - Example of approach
+  - Standard library preference note
+
+Example:
+"You are a Python coding assistant focused on clean, idiomatic code with 
+strong type safety. Your primary objectives are:
+
+1. Always write Python code with complete type hints
+2. Prioritize readability, maintainability, and Pythonic patterns
+3. Suggest refactorings for improved performance
+4. Never suggest breaking changes without explanation
+5. Auto-detect task requirements from context
+
+When suggesting changes, clearly explain:
+- Why the change improves the code
+- Potential tradeoffs or considerations
+- How it affects type safety and maintainability
+
+For code generation, follow PEP 8 standards and include appropriate error 
+handling. Prefer standard library solutions over external dependencies unless 
+specifically requested.
+
+Example approach:
+User: 'I need to process user data'
+You: 'Here's a type-safe approach using dataclasses...'"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STYLE: DETAILED (Comprehensive)
+Token Range: 600-1000+ tokens
+Use Case: Complex projects, specific workflows, detailed requirements
+Example Output Structure:
+  - Detailed opening with context
+  - Primary objectives (numbered, with sub-points)
+  - Specific behavioral rules for different scenarios
+  - Edge cases to handle
+  - Multiple detailed examples
+  - Performance considerations
+  - Security notes
+  - Style guide references
+  - Advanced patterns
+
+Example (truncated):
+"You are an expert backend architect specializing in scalable, production-grade
+Python services. Your role spans API design, database optimization, and 
+infrastructure patterns.
+
+PRIMARY OBJECTIVES:
+1. Design RESTful APIs that prioritize:
+   a. Stateless request handling
+   b. Proper HTTP status codes
+   c. Comprehensive error responses
+   d. Request/response validation
+   
+2. Implement robust error handling:
+   a. Distinguish client errors (4xx) from server errors (5xx)
+   b. Log all exceptions with full context
+   c. Provide meaningful error messages
+   d. Implement retry logic where applicable
+
+3. Database interactions:
+   a. Use parameterized queries to prevent SQL injection
+   b. Implement connection pooling
+   c. Add indexes for common queries
+   d. Monitor slow query logs
+
+EDGE CASES AND SPECIAL SCENARIOS:
+- Race conditions in concurrent requests
+- Memory leaks from unclosed connections
+- Cascading failures in microservices
+- Authentication token expiration
+- Rate limiting and DOS prevention
+
+EXAMPLES:
+
+Example 1: Error Handling
+User: 'Create an endpoint that fetches user data'
+You: [Provides complete error handling with 200, 400, 401, 404, 500 cases]
+
+Example 2: Database Optimization
+User: 'Write a query to find active users'
+You: [Includes indexes, connection pooling, and performance tips]
+
+SECURITY CONSIDERATIONS:
+- Always validate and sanitize inputs
+- Use parameterized queries
+- Implement proper authentication/authorization
+- Apply rate limiting
+
+PERFORMANCE GUIDELINES:
+- Cache frequently accessed data
+- Use async/await for I/O operations
+- Monitor and log slow operations
+- Profile before optimizing..."
+
+================================================================================
+3. TARGET OPTIMIZATIONS
+================================================================================
+
+The system prompt is customized based on which AI tool you're using:
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+TARGET: CURSOR
+Optimizations:
+  - Emphasizes inline code editing capabilities
+  - Focuses on refactoring and quick fixes
+  - Mentions code completion behavior
+  - Optimized for speed and directness
+  - Assumes user is actively editing code
+
+Example Opening:
+"You are a Cursor IDE assistant. Focus on quick, surgical code improvements. 
+Prioritize inline refactoring, optimization, and clear explanations of changes."
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+TARGET: CLAUDE
+Optimizations:
+  - Emphasizes reasoning and explanation
+  - Focuses on conversational clarity
+  - Values detailed logical chains
+  - Structured thinking processes
+  - Good for architecture and design discussions
+
+Example Opening:
+"You are Claude AI. Provide thorough reasoning, clear explanations, and 
+structured thinking. Break down complex problems into understandable steps."
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+TARGET: BOTH (CURSOR + CLAUDE)
+Optimizations:
+  - Balances both tools' strengths
+  - Code focus from Cursor + reasoning from Claude
+  - Works with both inline and conversational usage
+  - Emphasizes clarity for both contexts
+
+Example Opening:
+"You are a versatile coding assistant. Balance Cursor's code-editing strengths 
+with Claude's reasoning depth. Provide both quick fixes and clear explanations."
+
+================================================================================
+4. LANGUAGE/FRAMEWORK HANDLING
+================================================================================
+
+When a language is specified, it's included in the user message to the AI:
+
+With Language Specified:
+  "Task Type: Code Generation
+   Language/Framework: Python
+   Style Preference: Balanced"
+
+Without Language (Empty):
+  "Task Type: Code Generation
+   Style Preference: Balanced"
+  [Language line is omitted entirely]
+
+The AI uses this context to:
+  - Suggest language-idiomatic code
+  - Follow language-specific conventions (PEP 8 for Python, etc.)
+  - Reference language-specific libraries and tools
+  - Apply appropriate error handling patterns
+
+Example for Python:
+"Use type hints (PEP 484), follow PEP 8, prefer standard library solutions..."
+
+Example for TypeScript:
+"Use strict type checking, leverage interface segregation, use async/await..."
+
+================================================================================
+5. TOKEN COUNTING
+================================================================================
+
+Token counts vary based on:
+  - Length of generated prompt (primary factor)
+  - Style complexity
+  - Number of examples included
+  - Detail level
+
+Typical Token Ranges by Style:
+  Minimal:   50-200 tokens
+  Balanced:  300-500 tokens
+  Detailed:  600-1000+ tokens
+
+Token limits:
+  - Current API limit: 2000 tokens per prompt
+  - Typical output: 100-800 tokens
+  - No practical limitation for users
+
+================================================================================
+6. FORMATTING GUARANTEES
+================================================================================
+
+The following are GUARANTEED in every response:
+
+✓ NO MARKDOWN CODE FENCES
+  - All ``` markers are stripped
+  - Output is plain text, not wrapped in code blocks
+  - If markdown exists in the content, it's preserved inline
+
+✓ NO PREAMBLE OR EXPLANATION
+  - Response contains ONLY the system prompt
+  - No "Here's your prompt:" or "I created this for you..."
+  - No meta-commentary about the output
+
+✓ SINGLE UNIFIED PROMPT
+  - Output is one cohesive system prompt
+  - Not multiple prompts or fragments
+  - Ready to copy-paste directly into your AI tool
+
+✓ PROPER PUNCTUATION AND FORMATTING
+  - Grammatically correct
+  - Properly indented lists where applicable
+  - Consistent formatting throughout
+
+================================================================================
+7. ERROR CASES AND RECOVERY
+================================================================================
+
+API Errors:
+  401 Unauthorized → API key is invalid or expired
+  404 Not Found → Ollama Cloud endpoint unreachable
+  429 Rate Limited → Too many requests, wait and retry
+  500 Server Error → Ollama Cloud temporary issue
+  Timeout (>120s) → Request took too long, model is slow
+
+Recovery Strategy:
+  1. Check .env file has valid OLLAMA_API_KEY
+  2. Verify internet connection
+  3. Wait 30 seconds and retry
+  4. Check Ollama Cloud status page
+  5. Restart the server if cached errors persist
+
+=========================================================================   =
+8. TESTING THE RESPONSES
+================================================================================
+
+To quickly test response quality:
+
+1. MINIMAL TEST
+   Input: "A code formatter that helps clean up messy Python"
+   Target: Cursor
+   Style: Minimal
+   Expected: <150 tokens, 3-5 rules, very direct
+
+2. BALANCED TEST
+   Input: "I want an AI that helps with React development, suggesting components 
+           and best practices for performance"
+   Target: Claude
+   Style: Balanced
+   Expected: ~400 tokens, structured sections, examples
+
+3. DETAILED TEST
+   Input: "Build a system prompt for an AI that helps with database design, 
+           including schema optimization, indexing, and security"
+   Target: Both
+   Style: Detailed
+   Expected: >700 tokens, multiple examples, edge cases
+
+4. LANGUAGE-SPECIFIC TEST
+   Input: "Generate code snippets"
+   Language: TypeScript
+   Style: Balanced
+   Expected: Response mentions TypeScript, type checking, interfaces
+
+================================================================================
+9. RESPONSE QUALITY CHECKLIST
+================================================================================
+
+When reviewing a generated prompt, verify:
+
+□ No markdown code fences (no ``` anywhere)
+□ Addresses the user's raw input
+□ Appropriate length for selected style
+□ Optimized for selected target (Cursor/Claude/Both)
+□ Contains language references if language was specified
+□ Grammatically correct
+□ Actionable and specific (not vague)
+□ Ready to use immediately (no placeholders)
+□ Token count seems reasonable (<2000)
+□ No meta-commentary or explanations
+
+================================================================================
+10. COMMON PATTERNS IN OUTPUT
+================================================================================
+
+Most balanced prompts follow this structure:
+
+1. OPENING LINE
+   "You are a [role] focused on [primary goals]"
+
+2. NUMBERED OBJECTIVES (3-7 items)
+   "Your primary objectives are:"
+   1. Do X
+   2. Do Y
+   3. Do Z
+
+3. BEHAVIORAL GUIDELINES
+   "When [situation], [action]"
+   "Always [rule]"
+   "Never [restriction]"
+
+4. EXPLANATION REQUIREMENTS
+   "When suggesting changes, explain:"
+   - Why it improves the code
+   - Trade-offs and considerations
+
+5. IMPLEMENTATION NOTES
+   "For [task type], [approach/standard]"
+   "Prefer [preferred method] over [alternative]"
+
+6. EXAMPLES (Often in Balanced/Detailed)
+   "User: [example question]"
+   "You: [example response]"
+
+7. CLOSING NOTES (Detailed only)
+   Security considerations
+   Performance guidelines
+   Common edge cases
+
+================================================================================
+
+Questions? Check the /tests/test_generator.py file for more examples of 
+expected output structure.
+
+================================================================================

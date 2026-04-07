@@ -23,27 +23,20 @@ async def generate_prompt(request: PromptRequest, api_key: str) -> PromptRespons
     user_message = _build_user_message(request)
     
     try:
-        async with httpx.AsyncClient(timeout=60.0) as client:
+        # Combine system prompt and user message
+        combined_prompt = f"{system_prompt}\n\n{user_message}"
+        
+        async with httpx.AsyncClient(timeout=120.0) as client:
             response = await client.post(
-                "https://ollama.com/v1/chat/completions",
+                "https://ollama.com/api/generate",
                 headers={
                     "Authorization": f"Bearer {api_key}",
                     "Content-Type": "application/json",
                 },
                 json={
-                    "model": "deepseek-v3:671b",
-                    "messages": [
-                        {
-                            "role": "system",
-                            "content": system_prompt,
-                        },
-                        {
-                            "role": "user",
-                            "content": user_message,
-                        },
-                    ],
-                    "temperature": 0.7,
-                    "max_tokens": 2000,
+                    "model": "deepseek-v3.1:671b-cloud",
+                    "prompt": combined_prompt,
+                    "stream": False,
                 },
             )
         
@@ -51,10 +44,10 @@ async def generate_prompt(request: PromptRequest, api_key: str) -> PromptRespons
         data = response.json()
         
         # Extract the generated prompt from the response
-        generated_text = data["choices"][0]["message"]["content"]
+        generated_text = data.get("response", "")
         
-        # Extract token usage
-        tokens_used = data.get("usage", {}).get("total_tokens", 0)
+        # Extract token usage (estimate based on response length if not provided)
+        tokens_used = data.get("tokens", len(generated_text.split()))
         
         # Strip markdown code fences (``` or ```python, etc.)
         cleaned_prompt = _strip_markdown_fences(generated_text)
@@ -66,7 +59,7 @@ async def generate_prompt(request: PromptRequest, api_key: str) -> PromptRespons
         )
     
     except httpx.HTTPStatusError as e:
-        error_msg = f"Ollama API error: {e.status_code} - {e.response.text}"
+        error_msg = f"Ollama API error: {e.response.status_code} - {e.response.text}"
         return PromptResponse(
             prompt="",
             tokens_used=0,
