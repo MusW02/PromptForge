@@ -505,7 +505,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 👤 Author
 
 **Mustafa Waqar**
-- GitHub: [@yourusername](https://github.com/yourusername)
+- GitHub: [@MusW02](https://github.com/MusW02)
 - Email: mustafa.waqar02@gmail.com
 
 ---
